@@ -1,4 +1,5 @@
-﻿using Employee.Shared.Responses;
+﻿using Employee.Shared.Entities;
+using Employee.Shared.Responses;
 
 namespace Employee.Backend.UnitsOfWork.Interfaces;
 

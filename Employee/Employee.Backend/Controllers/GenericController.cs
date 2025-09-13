@@ -20,7 +20,7 @@ public class GenericController<T> : Controller where T : class
         {
             return Ok(action.Result);
         }
-        return BadRequest();
+        return BadRequest(action.Message);
     }
 
     [HttpGet("{id}")]

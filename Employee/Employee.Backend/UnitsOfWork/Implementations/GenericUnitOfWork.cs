@@ -1,5 +1,6 @@
 ﻿using Employee.Backend.Repositories.Interfaces;
 using Employee.Backend.UnitsOfWork.Interfaces;
+using Employee.Shared.Entities;
 using Employee.Shared.Responses;
 
 namespace Employee.Backend.UnitsOfWork.Implementations;
@@ -19,7 +20,7 @@ public class GenericUnitOfWork<T> : IGenericUnitOfWork<T> where T : class
 
     public virtual async Task<ActionResponse<T>> GetAsync(int id) => await _repository.GetAsync(id);
 
-    public async Task<ActionResponse<IEnumerable<T>>> GetAsync() => await _repository.GetAsync();
+    public virtual async Task<ActionResponse<IEnumerable<T>>> GetAsync() => await _repository.GetAsync();
 
     public virtual async Task<ActionResponse<T>> UpdateAsync(T entity) => await _repository.UpdateAsync(entity);
 }

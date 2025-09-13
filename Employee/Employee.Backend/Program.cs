@@ -22,6 +22,9 @@ namespace Employee.Backend
             builder.Services.AddScoped(typeof(IGenericUnitOfWork<>), typeof(GenericUnitOfWork<>));
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
+            builder.Services.AddScoped<IClerksRepository, ClerksRepository>();
+            builder.Services.AddScoped<IClerksUnitOfWork, ClerksUnitOfWork>();
+
             var app = builder.Build();
 
             SeedData(app);
