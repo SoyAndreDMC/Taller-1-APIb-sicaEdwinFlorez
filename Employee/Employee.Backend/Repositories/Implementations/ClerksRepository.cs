@@ -1,5 +1,7 @@
 ﻿using Employee.Backend.Data;
+using Employee.Backend.Helpers;
 using Employee.Backend.Repositories.Interfaces;
+using Employee.Shared.DTOs;
 using Employee.Shared.Entities;
 using Employee.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,41 @@ public class ClerksRepository : GenericRepository<Clerk>, IClerksRepository
     public ClerksRepository(DataContext context) : base(context)
     {
         _context = context;
+    }
+
+    public async Task<ActionResponse<IEnumerable<Clerk>>> GetAsync(PaginationDTO pagination, string? filter)
+    {
+        var q = _context.Clerks.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            var f = filter.Trim().ToLower();
+            q = q.Where(c => c.FirstName.ToLower().Contains(f) || c.LastName.ToLower().Contains(f));
+        }
+
+        q = q.OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
+
+        int page = pagination.Page <= 0 ? 1 : pagination.Page;
+        int take = pagination.RecordsNumber <= 0 ? 10 : Math.Min(pagination.RecordsNumber, 100);
+        int skip = (page - 1) * take;
+
+        var items = await q.Skip(skip).Take(take).ToListAsync();
+
+        return new ActionResponse<IEnumerable<Clerk>> { WasSuccess = true, Result = items };
+    }
+
+    public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination, string? filter)
+    {
+        var q = _context.Clerks.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            var f = filter.Trim().ToLower();
+            q = q.Where(c => c.FirstName.ToLower().Contains(f) || c.LastName.ToLower().Contains(f));
+        }
+
+        var total = await q.CountAsync();
+        return new ActionResponse<int> { WasSuccess = true, Result = total };
     }
 
     public override async Task<ActionResponse<IEnumerable<Clerk>>> GetAsync()
@@ -46,22 +83,13 @@ public class ClerksRepository : GenericRepository<Clerk>, IClerksRepository
 
     public async Task<ActionResponse<IEnumerable<Clerk>>> GetByNameAsync(string filter)
     {
-        var clerks = await _context.Clerks
-            .Where(x => x.FirstName.Contains(filter) || x.LastName.Contains(filter))
+        var f = filter.Trim().ToLower();
+        var items = await _context.Clerks
+            .AsNoTracking()
+            .Where(c => c.FirstName.ToLower().Contains(f) || c.LastName.ToLower().Contains(f))
+            .OrderBy(x => x.LastName).ThenBy(x => x.FirstName)
             .ToListAsync();
 
-        if (clerks == null || clerks.Count == 0)
-        {
-            return new ActionResponse<IEnumerable<Clerk>>
-            {
-                Message = "No se encontraron registros con ese criterio de búsqueda."
-            };
-        }
-
-        return new ActionResponse<IEnumerable<Clerk>>
-        {
-            WasSuccess = true,
-            Result = clerks
-        };
+        return new ActionResponse<IEnumerable<Clerk>> { WasSuccess = true, Result = items };
     }
 }

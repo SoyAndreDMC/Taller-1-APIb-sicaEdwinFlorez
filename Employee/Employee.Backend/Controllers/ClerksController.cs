@@ -2,6 +2,7 @@
 using Employee.Backend.Repositories.Interfaces;
 using Employee.Backend.UnitsOfWork.Implementations;
 using Employee.Backend.UnitsOfWork.Interfaces;
+using Employee.Shared.DTOs;
 using Employee.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,18 @@ public class ClerksController : GenericController<Clerk>
     public ClerksController(IGenericUnitOfWork<Clerk> unitOfWork, IClerksUnitOfWork clerksUnitOfWork) : base(unitOfWork)
     {
         _clerksUnitOfWork = clerksUnitOfWork;
+    }
+
+    [HttpGet("paginated")]
+    public override async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
+    {
+        var filter = HttpContext?.Request?.Query["filter"].ToString();
+        filter = string.IsNullOrWhiteSpace(filter) ? null : filter;
+
+        var response = await _clerksUnitOfWork.GetAsync(pagination, filter);
+        return response.WasSuccess
+            ? Ok(response.Result)
+            : BadRequest(response.Message ?? "No fue posible obtener los empleados.");
     }
 
     [HttpGet]
