@@ -1,0 +1,22 @@
+﻿@page "/clerks"
+<h3>Empleados</h3>
+
+@if(clerks == null)
+{
+    <p> Cargando... </p>
+}
+else
+{
+    <table border="1">
+        <tr>
+            <td>Empleado</td>
+        </tr>
+        @foreach(var clerk in clerks)
+        {
+            <tr>
+                <td>@clerk.FirstName @clerk.LastName</td>
+            </tr>
+        }
+    )
+    </table>
+}
