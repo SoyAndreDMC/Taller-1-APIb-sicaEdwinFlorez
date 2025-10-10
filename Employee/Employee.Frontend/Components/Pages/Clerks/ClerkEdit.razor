@@ -1,14 +1,16 @@
-﻿@if (clerk is null)
+﻿@using MudBlazor
+
+@if (clerk is null)
 {
-    <Loading />
+    <MudProgressCircular Indeterminate="true" Size="Size.Medium" />
 }
 else
 {
     <MudDialog>
         <DialogContent>
-            <ClerkForm Clerl="clerk" 
-                         OnValidSubmit="EditAsync" 
-                         ReturnAction="Return" />
+            <ClerkForm Clerk="clerk"
+                       OnSave="EditAsync"
+                       OnCancel="Cancel" />
         </DialogContent>
     </MudDialog>
 }

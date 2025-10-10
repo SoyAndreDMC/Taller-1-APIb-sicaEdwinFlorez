@@ -1,25 +1,48 @@
-﻿<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+﻿<EditForm EditContext="editContext" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
-    <MudTextField Label="Empleado"
-                  @bind-Value="@Clerk.FirstName"
-                  For="@(() => Clerk.FirstName)"
-                  Class="mb-4" />
+    <ValidationSummary />
 
-    <MudButton Variant="Variant.Outlined"
-               StartIcon="@Icons.Material.Filled.ArrowBack"
-               Color="Color.Info"
-               OnClick="ReturnAction">
-        <MudHidden xs="true">
-            Cancelar
-        </MudHidden>
-    </MudButton>
+    <MudStack Spacing="2">
+        <MudTextField Label="Nombre"
+                      @bind-Value="Clerk.FirstName"
+                      For="@(() => Clerk.FirstName)"
+                      Required="true" />
 
-    <MudButton Variant="Variant.Outlined"
-               StartIcon="@Icons.Material.Filled.Check"
-               Color="Color.Primary"
-               ButtonType="ButtonType.Submit">
-        <MudHidden xs="true">
-            Guardar Cambios
-        </MudHidden>
-    </MudButton>
+        <MudTextField Label="Apellido"
+                      @bind-Value="Clerk.LastName"
+                      For="@(() => Clerk.LastName)"
+                      Required="true" />
+
+        <MudDatePicker Label="Fecha de contratación"
+                       @bind-Date="_hireDate"
+                       Required="true" />
+
+        <MudSelect T="bool" Label="Estado" @bind-Value="Clerk.IsActive">
+            <MudSelectItem Value="true">Activo</MudSelectItem>
+            <MudSelectItem Value="false">Inactivo</MudSelectItem>
+        </MudSelect>
+
+        
+        <MudNumericField T="float" Label="Salario"
+                         @bind-Value="Clerk.Salary"
+                         Min="0"
+                         Required="true" />
+                         Required="true" />
+
+        <MudStack Row="true" Spacing="2" Class="mt-4">
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       Color="Color.Info"
+                       OnClick="HandleCancel">
+                Cancelar
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Check"
+                       Color="Color.Primary"
+                       ButtonType="ButtonType.Submit">
+                Guardar cambios
+            </MudButton>
+        </MudStack>
+    </MudStack>
 </EditForm>

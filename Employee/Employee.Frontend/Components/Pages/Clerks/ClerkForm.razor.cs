@@ -7,14 +7,31 @@ namespace Employee.Frontend.Components.Pages.Clerks;
 
 public partial class ClerkForm
 {
-    private EditContext editContext = null!;
+    private EditContext editContext = default!;
+    private DateTime? _hireDate;
 
     [EditorRequired, Parameter] public Clerk Clerk { get; set; } = null!;
-    [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
-    [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
+    [EditorRequired, Parameter] public EventCallback<Clerk> OnSave { get; set; }
+    [EditorRequired, Parameter] public EventCallback OnCancel { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        editContext = new(Clerk);
+        if (editContext is null || !ReferenceEquals(editContext.Model, Clerk))
+            editContext = new EditContext(Clerk);
+
+        _hireDate = Clerk.HireDate == default
+            ? (DateTime?)null
+            : Clerk.HireDate.ToDateTime(TimeOnly.MinValue);
     }
+
+    private async Task HandleValidSubmit()
+    {
+        Clerk.HireDate = _hireDate.HasValue
+            ? DateOnly.FromDateTime(_hireDate.Value)
+            : default;
+
+        await OnSave.InvokeAsync(Clerk);
+    }
+
+    private async Task HandleCancel() => await OnCancel.InvokeAsync();
 }

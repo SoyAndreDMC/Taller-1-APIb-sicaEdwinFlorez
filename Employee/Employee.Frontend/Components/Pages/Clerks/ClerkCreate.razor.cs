@@ -8,28 +8,35 @@ namespace Employee.Frontend.Components.Pages.Clerks;
 
 public partial class ClerkCreate
 {
-    private Clerk clerk = new();
+    private Clerk clerk = new()
+    {
+        FirstName = string.Empty,
+        LastName = string.Empty,
+        HireDate = DateOnly.FromDateTime(DateTime.Today),
+        IsActive = true,
+        Salary = 0
+    };
 
     [Inject] private IRepository Repository { get; set; } = null!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [CascadingParameter] private IMudDialogInstance? MudDialog { get; set; }
 
-    private async Task CreateAsync()
+    private async Task CreateAsync(Clerk model)
     {
-        var responseHttp = await Repository.PostAsync("/api/clerks", clerk);
+        var responseHttp = await Repository.PostAsync("/api/clerks", model);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(message!, Severity.Error);
+            Snackbar.Add(message ?? "Ocurrió un error al crear el registro", Severity.Error);
             return;
         }
 
-        Return();
         Snackbar.Add("Registro creado", Severity.Success);
+        MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private void Return()
     {
-        NavigationManager.NavigateTo("/clerks");
+        MudDialog?.Cancel();
     }
 }
