@@ -1,0 +1,14 @@
+﻿@if (clerk is null)
+{
+    <Loading />
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <ClerkForm Clerl="clerk" 
+                         OnValidSubmit="EditAsync" 
+                         ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
+}
