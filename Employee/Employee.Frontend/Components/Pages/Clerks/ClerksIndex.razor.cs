@@ -1,12 +1,14 @@
 using Employee.Frontend.Components.Shared;
 using Employee.Frontend.Repositories;
 using Employee.Shared.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net;
 
 namespace Employee.Frontend.Components.Pages.Clerks;
 
+[Authorize(Roles = "Admin")]
 public partial class ClerksIndex
 {
     private List<Clerk>? Clerks { get; set; }

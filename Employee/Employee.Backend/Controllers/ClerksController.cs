@@ -4,12 +4,15 @@ using Employee.Backend.UnitsOfWork.Implementations;
 using Employee.Backend.UnitsOfWork.Interfaces;
 using Employee.Shared.DTOs;
 using Employee.Shared.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Employee.Backend.Controllers;
 
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 public class ClerksController : GenericController<Clerk>
 {
