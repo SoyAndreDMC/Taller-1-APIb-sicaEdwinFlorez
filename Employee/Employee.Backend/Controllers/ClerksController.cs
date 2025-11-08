@@ -23,6 +23,13 @@ public class ClerksController : GenericController<Clerk>
         _clerksUnitOfWork = clerksUnitOfWork;
     }
 
+    [AllowAnonymous]
+    [HttpGet("combo")]
+    public async Task<IActionResult> GetComboAsync()
+    {
+        return Ok(await _clerksUnitOfWork.GetComboAsync());
+    }
+
     [HttpGet("paginated")]
     public override async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
     {

@@ -6,6 +6,8 @@ namespace Employee.Backend.Repositories.Interfaces;
 
 public interface IClerksRepository
 {
+    Task<IEnumerable<Clerk>> GetComboAsync();
+
     Task<ActionResponse<IEnumerable<Clerk>>> GetAsync(PaginationDTO pagination, string? filter);
 
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination, string? filter);

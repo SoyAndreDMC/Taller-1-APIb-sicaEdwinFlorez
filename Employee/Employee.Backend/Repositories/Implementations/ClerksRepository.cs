@@ -17,6 +17,13 @@ public class ClerksRepository : GenericRepository<Clerk>, IClerksRepository
         _context = context;
     }
 
+    public async Task<IEnumerable<Clerk>> GetComboAsync()
+    {
+        return await _context.Clerks
+            .OrderBy(c => c.LastName)
+            .ToListAsync();
+    }
+
     public async Task<ActionResponse<IEnumerable<Clerk>>> GetAsync(PaginationDTO pagination, string? filter)
     {
         var q = _context.Clerks.AsNoTracking().AsQueryable();

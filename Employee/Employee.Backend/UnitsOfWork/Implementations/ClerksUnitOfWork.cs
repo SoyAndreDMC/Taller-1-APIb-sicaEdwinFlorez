@@ -1,4 +1,5 @@
-﻿using Employee.Backend.Repositories.Interfaces;
+﻿using Employee.Backend.Repositories.Implementations;
+using Employee.Backend.Repositories.Interfaces;
 using Employee.Backend.UnitsOfWork.Interfaces;
 using Employee.Shared.DTOs;
 using Employee.Shared.Entities;
@@ -14,6 +15,8 @@ namespace Employee.Backend.UnitsOfWork.Implementations
         {
             _clerksRepository = clerksRepository;
         }
+
+        public async Task<IEnumerable<Clerk>> GetComboAsync() => await _clerksRepository.GetComboAsync();
 
         public async Task<ActionResponse<IEnumerable<Clerk>>> GetAsync(PaginationDTO pagination, string? filter) =>
         await _clerksRepository.GetAsync(pagination, filter);
