@@ -2,10 +2,17 @@
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <Authorizing>
-                <p>Autorizando...</p>
+                <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+                    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                </div>
             </Authorizing>
             <NotAuthorized>
-                <p>No estas autorizado para ver este contenido...</p>
+                <MudContainer Class="mt-5">
+                    <MudAlert Severity="Severity.Warning">
+                        <MudText Typo="Typo.h6">Acceso No Autorizado</MudText>
+                        <MudText>No estás autorizado para ver este contenido. Por favor inicia sesión.</MudText>
+                    </MudAlert>
+                </MudContainer>
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
@@ -13,7 +20,12 @@
     <NotFound>
         <PageTitle>No encontrado</PageTitle>
         <LayoutView Layout="@typeof(Layout.MainLayout)">
-            <p role="alert">Lo sentimos no hay nada en esta ruta.</p>
+            <MudContainer Class="mt-5">
+                <MudAlert Severity="Severity.Error">
+                    <MudText Typo="Typo.h6">Página No Encontrada</MudText>
+                    <MudText>Lo sentimos, no hay nada en esta ruta.</MudText>
+                </MudAlert>
+            </MudContainer>
         </LayoutView>
     </NotFound>
 </Router>

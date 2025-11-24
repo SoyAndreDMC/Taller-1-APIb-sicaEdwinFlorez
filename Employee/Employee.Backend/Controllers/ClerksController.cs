@@ -23,7 +23,6 @@ public class ClerksController : GenericController<Clerk>
         _clerksUnitOfWork = clerksUnitOfWork;
     }
 
-    [AllowAnonymous]
     [HttpGet("combo")]
     public async Task<IActionResult> GetComboAsync()
     {

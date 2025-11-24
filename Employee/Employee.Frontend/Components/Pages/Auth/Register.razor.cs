@@ -163,7 +163,7 @@ public partial class Register
             return;
         }
 
-        userDTO.UserType = UserType.User;
+        userDTO.UserType = UserType.Admin;
         userDTO.UserName = userDTO.Email;
 
         if (IsAdmin)
