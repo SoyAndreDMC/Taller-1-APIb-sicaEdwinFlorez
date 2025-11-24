@@ -21,14 +21,14 @@ public partial class Login
 
     private void ShowModalResendConfirmationEmail()
     {
-        var closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
-        DialogService.Show<ResendConfirmationEmailToken>("Reenvio de correo", closeOnEscapeKey);
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
+        DialogService.Show<ResendConfirmationEmailToken>("Reenvio de correo", options);
     }
 
     private void ShowModalRecoverPassword()
     {
-        var closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
-        DialogService.Show<RecoverPassword>("Rec. contraseña", closeOnEscapeKey);
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
+        DialogService.Show<RecoverPassword>("Rec. contraseña", options);
     }
 
     private void CloseModal()
@@ -46,14 +46,24 @@ public partial class Login
         }
 
         var responseHttp = await Repository.PostAsync<LoginDTO, TokenDTO>("/api/accounts/Login", loginDTO);
+
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(message!, Severity.Error);
+            Snackbar.Add(message ?? "Ha ocurrido un error inesperado al iniciar sesión.", Severity.Error);
             return;
         }
 
-        await LoginService.LoginAsync(responseHttp.Response!.Token);
-        NavigationManager.NavigateTo("/");
+        try
+        {
+            await LoginService.LoginAsync(responseHttp.Response!.Token);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error procesando el token de login: {ex.Message}", Severity.Error);
+
+            await LoginService.LogoutAsync();
+        }
     }
 }

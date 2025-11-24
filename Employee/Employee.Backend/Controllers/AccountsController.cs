@@ -29,6 +29,30 @@ public class AccountsController : ControllerBase
         _container = "users";
     }
 
+    [HttpPost("changePassword")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDTO model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var result = await _usersUnitOfWork.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors.FirstOrDefault()!.Description);
+        }
+
+        return NoContent();
+    }
+
     [HttpPut]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutAsync(User user)
@@ -80,6 +104,12 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] UserDTO model)
     {
         User user = model;
+        if (!string.IsNullOrEmpty(model.Photo))
+        {
+            var photoUser = Convert.FromBase64String(model.Photo);
+            model.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", _container);
+        }
+
         var result = await _usersUnitOfWork.AddUserAsync(user, model.Password);
         if (result.Succeeded)
         {

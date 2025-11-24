@@ -11,11 +11,9 @@
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <CascadingAuthenticationState>
-            <PageTitle>No encontrado</PageTitle>
-            <LayoutView Layout="@typeof(Layout.MainLayout)">
-                <p role="alert">Lo sentimos no hay nada en esta ruta.</p>
-            </LayoutView>
-        </CascadingAuthenticationState>
+        <PageTitle>No encontrado</PageTitle>
+        <LayoutView Layout="@typeof(Layout.MainLayout)">
+            <p role="alert">Lo sentimos no hay nada en esta ruta.</p>
+        </LayoutView>
     </NotFound>
 </Router>

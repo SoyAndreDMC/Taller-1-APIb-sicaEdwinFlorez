@@ -163,25 +163,29 @@ public partial class Register
             return;
         }
 
-        userDTO.UserType = UserType.User;
+        userDTO.UserType = IsAdmin ? UserType.Admin : UserType.User;
         userDTO.UserName = userDTO.Email;
-
-        if (IsAdmin)
-        {
-            userDTO.UserType = UserType.Admin;
-        }
 
         loading = true;
         var responseHttp = await Repository.PostAsync<UserDTO, TokenDTO>("/api/accounts/CreateUser", userDTO);
         loading = false;
+
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(message!, Severity.Error);
+            Snackbar.Add(message ?? "Error al registrar el usuario.", Severity.Error);
             return;
         }
 
-        await LoginService.LoginAsync(responseHttp.Response!.Token);
-        NavigationManager.NavigateTo("/");
+        try
+        {
+            await LoginService.LoginAsync(responseHttp.Response!.Token);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Usuario creado, pero hubo un problema con el token: {ex.Message}", Severity.Error);
+            await LoginService.LogoutAsync();
+        }
     }
 }
