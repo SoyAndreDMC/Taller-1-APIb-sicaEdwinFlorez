@@ -23,6 +23,20 @@ public class AuthenticationProviderJWT : AuthenticationStateProvider, ILoginServ
         _anonimous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
     }
 
+    public async Task LoginAsync(string token)
+    {
+        await _jSRuntime.SetLocalStorage(_tokenKey, token);
+        var authState = BuildAuthenticationState(token);
+        NotifyAuthenticationStateChanged(Task.FromResult(authState));
+    }
+
+    public async Task LogoutAsync()
+    {
+        await _jSRuntime.RemoveLocalStorage(_tokenKey);
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+        NotifyAuthenticationStateChanged(Task.FromResult(_anonimous));
+    }
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
@@ -52,19 +66,5 @@ public class AuthenticationProviderJWT : AuthenticationStateProvider, ILoginServ
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var unserializedToken = jwtSecurityTokenHandler.ReadJwtToken(token);
         return unserializedToken.Claims;
-    }
-
-    public async Task LoginAsync(string token)
-    {
-        await _jSRuntime.SetLocalStorage(_tokenKey, token);
-        var authState = BuildAuthenticationState(token);
-        NotifyAuthenticationStateChanged(Task.FromResult(authState));
-    }
-
-    public async Task LogoutAsync()
-    {
-        await _jSRuntime.RemoveLocalStorage(_tokenKey);
-        _httpClient.DefaultRequestHeaders.Authorization = null;
-        NotifyAuthenticationStateChanged(Task.FromResult(_anonimous));
     }
 }
